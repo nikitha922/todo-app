@@ -41,6 +41,16 @@ const SEED: Todo[] = [
   { id: 'seed-4', text: 'Read two chapters of the TypeScript handbook', completed: false, priority: 'medium', category: 'Learning', dueDate: dateInDays(4), createdAt: 4 },
   { id: 'seed-5', text: 'Pick up groceries', completed: false, priority: 'low', category: 'Shopping', dueDate: null, createdAt: 5 },
   { id: 'seed-6', text: 'Go for a 30 minute walk', completed: true, priority: 'low', category: 'Health', dueDate: null, createdAt: 6 },
+  { id: 'seed-7', text: 'Prepare slides for the design review', completed: false, priority: 'high', category: 'Work', dueDate: dateInDays(1), createdAt: 7 },
+  { id: 'seed-8', text: 'Pay the electricity bill', completed: false, priority: 'high', category: 'Personal', dueDate: dateInDays(-2), createdAt: 8 },
+  { id: 'seed-9', text: 'Renew gym membership', completed: false, priority: 'medium', category: 'Health', dueDate: dateInDays(3), createdAt: 9 },
+  { id: 'seed-10', text: 'Finish the React hooks course module', completed: false, priority: 'medium', category: 'Learning', dueDate: dateInDays(2), createdAt: 10 },
+  { id: 'seed-11', text: 'Buy a birthday gift for Sam', completed: false, priority: 'high', category: 'Shopping', dueDate: dateInDays(5), createdAt: 11 },
+  { id: 'seed-12', text: 'Call mom', completed: false, priority: 'low', category: 'Personal', dueDate: dateInDays(0), createdAt: 12 },
+  { id: 'seed-13', text: 'Fix the flaky integration test', completed: false, priority: 'high', category: 'Work', dueDate: dateInDays(0), createdAt: 13 },
+  { id: 'seed-14', text: 'Meal prep for the week', completed: true, priority: 'medium', category: 'Health', dueDate: dateInDays(-1), createdAt: 14 },
+  { id: 'seed-15', text: 'Order new running shoes', completed: false, priority: 'low', category: 'Shopping', dueDate: dateInDays(6), createdAt: 15 },
+  { id: 'seed-16', text: 'Write notes on the Postgres indexing talk', completed: true, priority: 'low', category: 'Learning', dueDate: null, createdAt: 16 },
 ]
 
 function groupKeyOf(todo: Todo, view: View): GroupKey {
@@ -48,11 +58,8 @@ function groupKeyOf(todo: Todo, view: View): GroupKey {
 }
 
 export default function App() {
-  const [todos, setTodos] = useLocalStorage<Todo[]>('todos', SEED)
-  const [dark, setDark] = useLocalStorage<boolean>(
-    'dark',
-    window.matchMedia('(prefers-color-scheme: dark)').matches,
-  )
+  const [todos, setTodos] = useLocalStorage<Todo[]>('todos-v2', SEED)
+  const [dark, setDark] = useLocalStorage<boolean>('dark-v2', false)
   const [view, setView] = useState<View>('all')
   const [category, setCategory] = useState<Category | null>(null)
   const [query, setQuery] = useState('')

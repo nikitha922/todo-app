@@ -48,25 +48,76 @@ export function Charts({ todos, dark }: Props) {
   const overdue = open.filter((t) => t.dueDate && t.dueDate < dateInDays(0)).length
 
   const days = Array.from({ length: 7 }, (_, i) => dateInDays(i))
-  const dueCounts = days.map((d) => open.filter((t) => t.dueDate === d).length)
-  const dayLabels = days.map((d, i) =>
-    i === 0 ? 'Today' : new Date(`${d}T00:00:00`).toLocaleDateString(undefined, { weekday: 'short' }),
-  )
+  const dueCounts = [overdue, ...days.map((d) => open.filter((t) => t.dueDate === d).length)]
+  const dueLabels = [
+    'Overdue',
+    ...days.map((d, i) =>
+      i === 0 ? 'Today' : new Date(`${d}T00:00:00`).toLocaleDateString(undefined, { weekday: 'short' }),
+    ),
+  ]
+  const dueColors = dueLabels.map((_, i) => (i === 0 ? c.high : i === 1 ? c.accent : c.ink))
 
   const font = { family: getComputedStyle(document.body).fontFamily, size: 12 }
+  const tooltip = {
+    backgroundColor: c.ink,
+    titleColor: c.surface,
+    bodyColor: c.surface,
+    padding: 10,
+    cornerRadius: 6,
+    displayColors: false,
+    titleFont: { ...font, weight: 600 as const },
+    bodyFont: font,
+  }
 
-  const axes: ChartOptions<'bar'> = {
+  const catCounts = CATEGORIES.map((k) => open.filter((t) => t.category === k).length)
+
+  const centerText = {
+    id: 'centerText',
+    afterDraw(chart: ChartJS) {
+      const { ctx, chartArea } = chart
+      const x = (chartArea.left + chartArea.right) / 2
+      const y = (chartArea.top + chartArea.bottom) / 2
+      ctx.save()
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillStyle = c.ink
+      ctx.font = `700 30px ${font.family}`
+      ctx.fillText(String(open.length), x, y - 8)
+      ctx.fillStyle = c.muted
+      ctx.font = `12px ${font.family}`
+      ctx.fillText('open tasks', x, y + 14)
+      ctx.restore()
+    },
+  }
+
+  const vertical: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
+    plugins: { legend: { display: false }, tooltip },
     scales: {
       x: { grid: { display: false }, border: { color: c.line }, ticks: { color: c.muted, font } },
       y: {
         beginAtZero: true,
         grid: { color: c.line },
         border: { display: false },
-        ticks: { color: c.muted, font, precision: 0 },
+        ticks: { color: c.muted, font, precision: 0, stepSize: 1 },
       },
+    },
+  }
+
+  const horizontal: ChartOptions<'bar'> = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip },
+    scales: {
+      x: {
+        beginAtZero: true,
+        grid: { color: c.line },
+        border: { display: false },
+        ticks: { color: c.muted, font, precision: 0, stepSize: 1 },
+      },
+      y: { grid: { display: false }, border: { display: false }, ticks: { color: c.ink, font } },
     },
   }
 
@@ -97,23 +148,27 @@ export function Charts({ todos, dark }: Props) {
           ) : (
             <Doughnut
               data={{
-                labels: CATEGORIES,
+                labels: CATEGORIES.map((k, i) => `${k} (${catCounts[i]})`),
                 datasets: [
                   {
-                    data: CATEGORIES.map((k) => open.filter((t) => t.category === k).length),
+                    data: catCounts,
                     backgroundColor: c.cats,
                     borderColor: c.surface,
-                    borderWidth: 2,
+                    borderWidth: 3,
+                    hoverOffset: 4,
                   },
                 ],
               }}
+              plugins={[centerText]}
               options={{
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '66%',
+                cutout: '70%',
+                layout: { padding: 4 },
                 plugins: {
+                  tooltip: { ...tooltip, displayColors: true },
                   legend: {
-                    position: 'right',
+                    position: 'bottom',
                     labels: { color: c.ink, font, usePointStyle: true, boxWidth: 8, padding: 14 },
                   },
                 },
@@ -124,14 +179,14 @@ export function Charts({ todos, dark }: Props) {
       </section>
 
       <section className="chart-card">
-        <h3>Due in the next 7 days</h3>
+        <h3>Due: overdue and the next 7 days</h3>
         <div className="chart-box">
           <Bar
             data={{
-              labels: dayLabels,
-              datasets: [{ data: dueCounts, backgroundColor: c.accent, borderRadius: 3, maxBarThickness: 28 }],
+              labels: dueLabels,
+              datasets: [{ data: dueCounts, backgroundColor: dueColors, borderRadius: 4, maxBarThickness: 32 }],
             }}
-            options={axes}
+            options={vertical}
           />
         </div>
       </section>
@@ -141,17 +196,17 @@ export function Charts({ todos, dark }: Props) {
         <div className="chart-box chart-short">
           <Bar
             data={{
-              labels: PRIORITIES.map((p) => p[0].toUpperCase() + p.slice(1)),
+              labels: [...PRIORITIES].reverse().map((p) => p[0].toUpperCase() + p.slice(1)),
               datasets: [
                 {
-                  data: PRIORITIES.map((p) => open.filter((t) => t.priority === p).length),
-                  backgroundColor: [c.low, c.medium, c.high],
-                  borderRadius: 3,
-                  maxBarThickness: 48,
+                  data: [...PRIORITIES].reverse().map((p) => open.filter((t) => t.priority === p).length),
+                  backgroundColor: [c.high, c.medium, c.low],
+                  borderRadius: 4,
+                  maxBarThickness: 22,
                 },
               ],
             }}
-            options={axes}
+            options={horizontal}
           />
         </div>
       </section>

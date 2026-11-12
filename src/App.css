@@ -713,10 +713,10 @@ h1 {
   height: 200px;
 }
 .chart-doughnut {
-  height: 220px;
+  height: 280px;
 }
 .chart-short {
-  height: 160px;
+  height: 140px;
 }
 .chart-empty {
   display: grid;
