@@ -1,15 +1,20 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type RefObject } from 'react'
+import { dateInDays } from '../dates'
 import { CATEGORIES, PRIORITIES, type Category, type Priority } from '../types'
 
 interface Props {
+  inputRef: RefObject<HTMLInputElement | null>
+  defaultCategory: Category | null
   onAdd: (text: string, priority: Priority, category: Category, dueDate: string | null) => void
 }
 
-export function TodoForm({ onAdd }: Props) {
+export function TodoForm({ inputRef, defaultCategory, onAdd }: Props) {
   const [text, setText] = useState('')
   const [priority, setPriority] = useState<Priority>('medium')
-  const [category, setCategory] = useState<Category>('Personal')
+  const [pickedCategory, setCategory] = useState<Category>('Personal')
   const [dueDate, setDueDate] = useState('')
+
+  const category = defaultCategory ?? pickedCategory
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -24,48 +29,76 @@ export function TodoForm({ onAdd }: Props) {
     <form className="form" onSubmit={submit}>
       <div className="form-main">
         <input
+          ref={inputRef}
           className="form-input"
-          placeholder="What needs to be done?"
+          placeholder="Add a task…"
           value={text}
           onChange={(e) => setText(e.target.value)}
           aria-label="New task"
         />
+        <kbd className="kbd">N</kbd>
         <button className="btn-primary" type="submit" disabled={!text.trim()}>
-          Add
+          Add task
         </button>
       </div>
-      <div className="form-options">
-        <div className="segmented" role="group" aria-label="Priority">
+
+      <div className="form-row">
+        <span className="form-label">Category</span>
+        <div className="pills">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              data-cat={c}
+              className={`pill ${category === c ? 'active' : ''}`}
+              onClick={() => setCategory(c)}
+              disabled={defaultCategory !== null && defaultCategory !== c}
+            >
+              <span className="cat-dot" />
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="form-row">
+        <span className="form-label">Priority</span>
+        <div className="pills">
           {PRIORITIES.map((p) => (
             <button
               key={p}
               type="button"
-              className={`seg seg-${p} ${priority === p ? 'active' : ''}`}
+              className={`pill pill-${p} ${priority === p ? 'active' : ''}`}
               onClick={() => setPriority(p)}
             >
               {p}
             </button>
           ))}
         </div>
-        <select
-          className="select"
-          value={category}
-          onChange={(e) => setCategory(e.target.value as Category)}
-          aria-label="Category"
-        >
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <input
-          className="select"
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          aria-label="Due date"
-        />
+        <span className="form-label form-label-gap">Due</span>
+        <div className="pills">
+          <button
+            type="button"
+            className={`pill ${dueDate === dateInDays(0) ? 'active' : ''}`}
+            onClick={() => setDueDate(dueDate === dateInDays(0) ? '' : dateInDays(0))}
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            className={`pill ${dueDate === dateInDays(1) ? 'active' : ''}`}
+            onClick={() => setDueDate(dueDate === dateInDays(1) ? '' : dateInDays(1))}
+          >
+            Tomorrow
+          </button>
+          <input
+            className="date-input"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            aria-label="Due date"
+          />
+        </div>
       </div>
     </form>
   )

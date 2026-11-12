@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { bucketOf, formatDue } from '../dates'
 import type { Todo } from '../types'
 
 interface Props {
@@ -8,21 +9,7 @@ interface Props {
   onEdit: (id: string, text: string) => void
 }
 
-function dueLabel(due: string, completed: boolean) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const date = new Date(`${due}T00:00:00`)
-  const diff = Math.round((date.getTime() - today.getTime()) / 86_400_000)
-
-  let label: string
-  if (diff === 0) label = 'Today'
-  else if (diff === 1) label = 'Tomorrow'
-  else if (diff === -1) label = 'Yesterday'
-  else label = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-
-  const overdue = diff < 0 && !completed
-  return { label, overdue }
-}
+const LEVEL = { low: 1, medium: 2, high: 3 } as const
 
 export function TodoItem({ todo, onToggle, onDelete, onEdit }: Props) {
   const [editing, setEditing] = useState(false)
@@ -40,17 +27,17 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: Props) {
     setEditing(false)
   }
 
-  const due = todo.dueDate ? dueLabel(todo.dueDate, todo.completed) : null
+  const overdue = !todo.completed && bucketOf(todo.dueDate) === 'overdue'
 
   return (
-    <li className={`item ${todo.completed ? 'done' : ''}`}>
+    <li className={`item ${todo.completed ? 'done' : ''}`} data-cat={todo.category}>
       <button
         className={`check ${todo.completed ? 'checked' : ''}`}
         onClick={() => onToggle(todo.id)}
         aria-label={todo.completed ? 'Mark as active' : 'Mark as completed'}
       >
         <svg viewBox="0 0 24 24" width="14" height="14">
-          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <path className="tick" d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
@@ -76,18 +63,20 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: Props) {
           </span>
         )}
         <div className="meta">
-          <span className={`dot dot-${todo.priority}`} aria-hidden />
-          <span className="priority-label">{todo.priority}</span>
-          <span aria-hidden>·</span>
-          <span>{todo.category}</span>
-          {due && (
-            <>
-              <span aria-hidden>·</span>
-              <span className={due.overdue ? 'overdue' : ''}>
-                {due.label}
-                {due.overdue ? ' (overdue)' : ''}
-              </span>
-            </>
+          <span className="meta-cat">
+            <span className="cat-dot" />
+            {todo.category}
+          </span>
+          <span className="prio" data-level={LEVEL[todo.priority]} title={`${todo.priority} priority`}>
+            <i />
+            <i />
+            <i />
+          </span>
+          {todo.dueDate && (
+            <span className={`due ${overdue ? 'overdue' : ''}`}>
+              {formatDue(todo.dueDate)}
+              {overdue ? ' · overdue' : ''}
+            </span>
           )}
         </div>
       </div>

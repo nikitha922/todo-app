@@ -1,35 +1,48 @@
 :root {
-  --bg: #f6f6f4;
-  --surface: #ffffff;
-  --text: #191919;
-  --muted: #6e6e6a;
-  --border: #e3e3df;
-  --hover: #f0f0ed;
-  --ink: #191919;
-  --on-ink: #ffffff;
-  --focus: #2563eb;
-  --high: #c2410c;
-  --medium: #a16207;
-  --low: #52525b;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bg: #f1ede3;
+  --surface: #fbf9f4;
+  --ink: #1d1a14;
+  --on-ink: #fbf9f4;
+  --muted: #7a7466;
+  --line: #ddd7c8;
+  --line-strong: #c4bca8;
+  --hover: #e9e4d6;
+  --accent: #d4411e;
+  --on-accent: #ffffff;
+  --high: #c0361a;
+  --medium: #b7791f;
+  --low: #6b7f5e;
+  --c-personal: #3f6f8f;
+  --c-work: #c2562a;
+  --c-health: #3d7a5a;
+  --c-learning: #9a7414;
+  --c-shopping: #b0475b;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--sans);
   font-size: 15px;
   line-height: 1.45;
-  color: var(--text);
+  color: var(--ink);
 }
 
 :root[data-theme='dark'] {
-  --bg: #121212;
-  --surface: #1a1a1a;
-  --text: #ececea;
-  --muted: #9a9a95;
-  --border: #2c2c2a;
-  --hover: #232322;
-  --ink: #ececea;
-  --on-ink: #121212;
-  --focus: #6b9bff;
-  --high: #fb923c;
-  --medium: #facc15;
-  --low: #a1a1aa;
+  --bg: #14120e;
+  --surface: #1c1a15;
+  --ink: #efe9db;
+  --on-ink: #14120e;
+  --muted: #a29b8a;
+  --line: #2d2a22;
+  --line-strong: #453f33;
+  --hover: #25221b;
+  --accent: #ef6b44;
+  --on-accent: #17120d;
+  --high: #f0724f;
+  --medium: #e0a53a;
+  --low: #8fa67f;
+  --c-personal: #6aa3c7;
+  --c-work: #ea8355;
+  --c-health: #6fb28f;
+  --c-learning: #d4a93a;
+  --c-shopping: #de7a8c;
 }
 
 * {
@@ -39,7 +52,7 @@
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--text);
+  color: var(--ink);
 }
 
 button,
@@ -53,7 +66,29 @@ button {
   cursor: pointer;
 }
 
+h1,
+h2,
+p {
+  margin: 0;
+}
+
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+[data-cat='Personal'] {
+  --cat: var(--c-personal);
+}
+[data-cat='Work'] {
+  --cat: var(--c-work);
+}
+[data-cat='Health'] {
+  --cat: var(--c-health);
+}
+[data-cat='Learning'] {
+  --cat: var(--c-learning);
+}
+[data-cat='Shopping'] {
+  --cat: var(--c-shopping);
 }

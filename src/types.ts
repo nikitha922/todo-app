@@ -2,7 +2,7 @@ export type Priority = 'low' | 'medium' | 'high'
 
 export type Category = 'Personal' | 'Work' | 'Health' | 'Learning' | 'Shopping'
 
-export type Filter = 'all' | 'active' | 'completed'
+export type View = 'all' | 'today' | 'upcoming' | 'completed'
 
 export interface Todo {
   id: string
