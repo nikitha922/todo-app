@@ -75,7 +75,10 @@ export function TodoForm({ inputRef, defaultCategory, onAdd }: Props) {
             </button>
           ))}
         </div>
-        <span className="form-label form-label-gap">Due</span>
+      </div>
+
+      <div className="form-row">
+        <span className="form-label">Due</span>
         <div className="pills">
           <button
             type="button"
