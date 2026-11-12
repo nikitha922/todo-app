@@ -1,4 +1,57 @@
+:root {
+  --bg: #f4f3ff;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-solid: #ffffff;
+  --text: #1e1b3a;
+  --muted: #7a7799;
+  --border: rgba(120, 110, 180, 0.18);
+  --accent: #7c5cff;
+  --accent-2: #38bdf8;
+  --accent-soft: rgba(124, 92, 255, 0.12);
+  --shadow: 0 20px 60px -20px rgba(80, 60, 180, 0.35);
+  --high: #ef4444;
+  --medium: #f59e0b;
+  --low: #10b981;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+}
+
+:root[data-theme='dark'] {
+  --bg: #0e0c1f;
+  --card: rgba(26, 23, 54, 0.72);
+  --card-solid: #1a1736;
+  --text: #ecebff;
+  --muted: #9a97bd;
+  --border: rgba(160, 150, 255, 0.16);
+  --accent: #9b82ff;
+  --accent-soft: rgba(155, 130, 255, 0.16);
+  --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
 }
