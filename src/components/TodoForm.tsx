@@ -31,7 +31,7 @@ export function TodoForm({ onAdd }: Props) {
           aria-label="New task"
         />
         <button className="btn-primary" type="submit" disabled={!text.trim()}>
-          <span aria-hidden>＋</span> Add
+          Add
         </button>
       </div>
       <div className="form-options">

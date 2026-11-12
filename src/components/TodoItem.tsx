@@ -8,14 +8,6 @@ interface Props {
   onEdit: (id: string, text: string) => void
 }
 
-const CATEGORY_ICONS: Record<Todo['category'], string> = {
-  Personal: '🏠',
-  Work: '💼',
-  Health: '💪',
-  Learning: '📚',
-  Shopping: '🛒',
-}
-
 function dueLabel(due: string, completed: boolean) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -51,13 +43,13 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: Props) {
   const due = todo.dueDate ? dueLabel(todo.dueDate, todo.completed) : null
 
   return (
-    <li className={`item priority-${todo.priority} ${todo.completed ? 'done' : ''}`}>
+    <li className={`item ${todo.completed ? 'done' : ''}`}>
       <button
         className={`check ${todo.completed ? 'checked' : ''}`}
         onClick={() => onToggle(todo.id)}
         aria-label={todo.completed ? 'Mark as active' : 'Mark as completed'}
       >
-        <svg viewBox="0 0 24 24" width="16" height="16">
+        <svg viewBox="0 0 24 24" width="14" height="14">
           <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
@@ -79,30 +71,33 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: Props) {
             }}
           />
         ) : (
-          <span className="item-text" onDoubleClick={() => setEditing(true)} title="Double-click to edit">
+          <span className="item-text" onDoubleClick={() => setEditing(true)}>
             {todo.text}
           </span>
         )}
-        <div className="chips">
-          <span className="chip chip-category">
-            {CATEGORY_ICONS[todo.category]} {todo.category}
-          </span>
-          <span className={`chip chip-priority chip-${todo.priority}`}>{todo.priority}</span>
+        <div className="meta">
+          <span className={`dot dot-${todo.priority}`} aria-hidden />
+          <span className="priority-label">{todo.priority}</span>
+          <span aria-hidden>·</span>
+          <span>{todo.category}</span>
           {due && (
-            <span className={`chip chip-due ${due.overdue ? 'overdue' : ''}`}>
-              📅 {due.label}
-              {due.overdue ? ' · overdue' : ''}
-            </span>
+            <>
+              <span aria-hidden>·</span>
+              <span className={due.overdue ? 'overdue' : ''}>
+                {due.label}
+                {due.overdue ? ' (overdue)' : ''}
+              </span>
+            </>
           )}
         </div>
       </div>
 
       <div className="item-actions">
-        <button className="icon-btn" onClick={() => setEditing(true)} aria-label="Edit task">
-          ✎
+        <button className="text-btn" onClick={() => setEditing(true)}>
+          Edit
         </button>
-        <button className="icon-btn danger" onClick={() => onDelete(todo.id)} aria-label="Delete task">
-          ✕
+        <button className="text-btn danger" onClick={() => onDelete(todo.id)}>
+          Delete
         </button>
       </div>
     </li>

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ProgressRing } from './components/ProgressRing'
 import { TodoForm } from './components/TodoForm'
 import { TodoItem } from './components/TodoItem'
 import { useLocalStorage } from './useLocalStorage'
@@ -36,13 +35,6 @@ const SEED: Todo[] = [
     createdAt: 2,
   },
 ]
-
-function greeting() {
-  const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 18) return 'Good afternoon'
-  return 'Good evening'
-}
 
 export default function App() {
   const [todos, setTodos] = useLocalStorage<Todo[]>('todos', SEED)
@@ -114,47 +106,32 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="blob blob-1" />
-      <div className="blob blob-2" />
-
       <main className="card">
         <header className="header">
           <div>
             <p className="eyebrow">{today}</p>
-            <h1>{greeting()} 👋</h1>
-            <p className="subtitle">
-              {active === 0
-                ? total === 0
-                  ? 'Add your first task to get started.'
-                  : 'All done. Enjoy the free time!'
-                : `You have ${active} task${active === 1 ? '' : 's'} left.`}
-            </p>
+            <h1>Tasks</h1>
           </div>
-          <div className="header-right">
-            <button
-              className="theme-toggle"
-              onClick={() => setDark(!dark)}
-              aria-label="Toggle dark mode"
-              title="Toggle dark mode"
-            >
-              {dark ? '☀️' : '🌙'}
-            </button>
-            <ProgressRing percent={percent} />
-          </div>
+          <button className="theme-toggle" onClick={() => setDark(!dark)}>
+            {dark ? 'Light mode' : 'Dark mode'}
+          </button>
         </header>
 
-        <section className="stats">
-          <div className="stat">
-            <strong>{total}</strong>
-            <span>Total</span>
+        <section className="progress">
+          <div className="progress-text">
+            <span>
+              {completed} of {total} done
+            </span>
+            <span>{percent}%</span>
           </div>
-          <div className="stat">
-            <strong>{active}</strong>
-            <span>Active</span>
-          </div>
-          <div className="stat">
-            <strong>{completed}</strong>
-            <span>Done</span>
+          <div
+            className="progress-track"
+            role="progressbar"
+            aria-valuenow={percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <div className="progress-fill" style={{ width: `${percent}%` }} />
           </div>
         </section>
 
@@ -197,10 +174,7 @@ export default function App() {
         </section>
 
         {visible.length === 0 ? (
-          <div className="empty">
-            <div className="empty-icon">{total === 0 ? '📝' : '🔍'}</div>
-            <p>{total === 0 ? 'Nothing here yet' : 'No tasks match your view'}</p>
-          </div>
+          <div className="empty">{total === 0 ? 'No tasks yet. Add one above.' : 'No tasks match this view.'}</div>
         ) : (
           <ul className="list">
             {visible.map((todo) => (
@@ -211,9 +185,7 @@ export default function App() {
 
         {completed > 0 && (
           <footer className="footer">
-            <span>
-              {completed} completed
-            </span>
+            <span>{active} remaining</span>
             <button className="link-btn" onClick={clearCompleted}>
               Clear completed
             </button>
